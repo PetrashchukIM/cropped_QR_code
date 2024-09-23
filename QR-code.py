@@ -12,6 +12,10 @@ def extract_qr_codes(image_path, output_path1, output_path2):
     # Create a QR code detector
     qr_detector = cv2.QRCodeDetector()
 
+    height, width, _ = image.shape
+    left_half = image[:, :width // 2]
+    right_half = image[:, width // 2:]
+    
     # Detect and decode the QR codes
     data1, points1, _ = qr_detector.detectAndDecode(image)
     if points1 is not None and len(points1) > 0:
@@ -49,4 +53,4 @@ def extract_qr_codes(image_path, output_path1, output_path2):
         print("Second QR code not found.")
 
 # Call the function
-extract_qr_codes("145311.png", "output_qr1.png", "output_qr2.png")
+extract_qr_codes("1453.png", "output_qr1.png", "output_qr2.png")
