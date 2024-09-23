@@ -17,10 +17,7 @@ def extract_qr_code(image_path, output_path):
 
         # Отримуємо координати (якщо QR-код перекошений, їх буде 4)
         x1, y1 = points[0]
-        x2, y2 = points[1]
-        x3, y3 = points[2]
-        x4, y4 = points[3]
-
+      
         # Обрізаємо зображення, вирізаючи QR-код за допомогою координат
         x_min = min(int(x1), int(x2), int(x3), int(x4))
         y_min = min(int(y1), int(y2), int(y3), int(y4))
@@ -36,4 +33,4 @@ def extract_qr_code(image_path, output_path):
         print("QR-код не знайдено на зображенні.")
 
 # Виклик функції
-extract_qr_code("input.png", "output_qr.png")
+extract_qr_code("1453.png", "output_qr.png")
