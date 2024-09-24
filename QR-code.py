@@ -1,5 +1,9 @@
 import cv2
 from PIL import Image
+import os
+import shutil
+
+OUTPUT_PATH='output_QR_code'
 
 def extract_qr_codes(image_path, output_path1, output_path2):
     # Load the image using OpenCV
@@ -52,5 +56,24 @@ def extract_qr_codes(image_path, output_path1, output_path2):
     else:
         print("Second QR code not found.")
 
-# Call the function
+
+
+def check_and_remove_directory(directory_path):
+    if os.path.exists(directory_path) and os.path.isdir(directory_path):
+        shutil.rmtree(directory_path)
+        print(f"The folder '{directory_path}' was delete.")
+    else:
+        print(f"The fiolder '{directory_path}' not found.")
+
+
+def create_directory(directory_path):
+    try:
+        os.makedirs(directory_path, exist_ok=True)
+        print(f"The folder '{directory_path}' created.")
+    except Exception as e:
+        print(f"Error create a folder: {e}")
+
+
+check_and_remove_directory(OUTPUT_PATH)
+create_directory(OUTPUT_PATH)
 extract_qr_codes("1453.png", "output_qr1.png", "output_qr2.png")
