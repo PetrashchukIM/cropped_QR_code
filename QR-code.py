@@ -76,4 +76,8 @@ def create_directory(directory_path):
 
 check_and_remove_directory(OUTPUT_PATH)
 create_directory(OUTPUT_PATH)
-extract_qr_codes("1453.png", "output_qr1.png", "output_qr2.png")
+
+output_path1 = os.path.join(OUTPUT_PATH, "output_qr1.png")
+output_path2 = os.path.join(OUTPUT_PATH, "output_qr2.png")
+
+extract_qr_codes("145311.png", output_path1, output_path2)
