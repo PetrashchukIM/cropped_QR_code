@@ -3,6 +3,8 @@ from PIL import Image
 import os
 import shutil
 
+
+OUTPUT_RESULT="output_QR"
 OUTPUT_PATH = 'output_QR_code'
 TMP_PATH = 'temp'
 TMP_FILE_ONE = 'one_part.png'
@@ -25,17 +27,20 @@ def split_image(image_path):
     save_img (left_half,TMP_FILE_ONE)
     save_img (right_half,TMP_FILE_SECOND)
 
+    extract_and_safe_qr_code (TMP_FILE_ONE,"one_qr.png")
+    extract_and_safe_qr_code (TMP_FILE_SECOND,"second_qr.png")
+
 def save_img(half, name_file):
     half_rgb = cv2.cvtColor(half, cv2.COLOR_BGR2RGB)
     half_pil = Image.fromarray(half_rgb)
     half_pil.save(os.path.join(TMP_PATH, name_file))
     print(f"File {name_file} saved")
 
-def extract_and_safe_qr_code (tmp_path, name_file, otput_name_file):
-
-    print(f'Start extracting {image_path}')
+def extract_and_safe_qr_code (name_file, otput_name_file):
     
-    input_img = os.path.join(name_file, tmp_path)
+    input_img = os.path.join(TMP_PATH, name_file)
+    print(f'Start extracting {input_img}')
+
     image = cv2.imread(input_img)
 
     if image is None:
@@ -55,10 +60,11 @@ def extract_and_safe_qr_code (tmp_path, name_file, otput_name_file):
         cropped_image_pi = Image.fromarray(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))
         output_full_path_img = os.path.join(OUTPUT_PATH, otput_name_file)
         cropped_image_pi.save(output_full_path_img)
+
         print(f"Extracted QR code and saved as {output_full_path_img}")
     else:
         print(F"QR code not found in {input_img}")
-        
+
 
 def check_and_remove_directory(directory_path):
     if os.path.exists(directory_path) and os.path.isdir(directory_path):
@@ -80,7 +86,7 @@ create_directory(OUTPUT_PATH)
 check_and_remove_directory(TMP_PATH)
 create_directory(TMP_PATH)
 
-split_image("14531.png")
+split_image("1453.png")
 
 
 
