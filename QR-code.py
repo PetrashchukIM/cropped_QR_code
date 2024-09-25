@@ -19,12 +19,20 @@ def extract_qr_codes(image_path, output_path1, output_path2):
 
     height, width, _ = image.shape
     
-    count_part = 3
+    count_part = 4
     part_width = width // count_part
     left_half = image[:, :part_width]
-    right_half = image[:, (count_part) * part_width:]
+    right_half = image[:, (count_part-1) * part_width:]
 
+def extract_and_save_img(half, name_file)
+    half_rgb = cv2.cvtColor(half, cv2.COLOR_BGR2RGB)
+    half_pil = Image.fromarray(half_rgb)
+    half_pil.save(os.path.join(OUTPUT_PATH, name_file))
+    print("Right half saved as 'right_half_output.png'")
     print(f'{width},{height}')
+
+
+    
     # Detect and decode the QR codes
     data1, points1, _ = qr_detector.detectAndDecode(left_half)
     if points1 is not None and len(points1) > 0:
@@ -60,6 +68,7 @@ def extract_qr_codes(image_path, output_path1, output_path2):
         print("Extracted data:", data2)
     else:
         print("Second QR code not found.")
+
 
 def check_and_remove_directory(directory_path):
     if os.path.exists(directory_path) and os.path.isdir(directory_path):
