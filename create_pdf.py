@@ -4,15 +4,24 @@ from reportlab.pdfgen import canvas
 
 IMG_WIDTH = 40
 IMG_HEIGHT = 40
-BACKGROUND_WIDTH = 75
-BACKGROUND_HEIGHT = 75
 X_OFFSETS = 35
 Y_OFFSETS = 35
+
 IMGS_BTW_WIDTH = 10
 IMGS_BTW_HEIGHT = 15
 IMGS_PER_ROW = 5
+
+BACKGROUND_WIDTH = 75
+BACKGROUND_HEIGHT = 75
+BACKGROUND_WIDTH_LAYER1 = 0.5
+BACKGROUND_WIDTH_LAYER2 = 12
+
 BACKGROUND_PATH_ONE = os.path.join('template_background', 'tml_background_one.png')
 BACKGROUND_PATH_SECOND = os.path.join('template_background', 'tml_background_second.png')
+BACKGROUND_PATH_LAYER1 = os.path.join('template_background', 'layer1.png')
+BACKGROUND_PATH_LAYER2 = os.path.join('template_background', 'layer2.png')
+BACKGROUND_PATH_LAYER3 = os.path.join('template_background', 'layer3.png')
+
 
 def create_pdf(image_paths, output_pdf_path):
     c = canvas.Canvas(output_pdf_path, pagesize=letter)
@@ -37,7 +46,21 @@ def create_pdf(image_paths, output_pdf_path):
         one_image = pair[0]
         second_image = pair[1]
         
-        c.drawImage(BACKGROUND_PATH_ONE, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
+        c.drawImage(BACKGROUND_PATH_LAYER1, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
+        
+        c.drawImage(BACKGROUND_PATH_LAYER2, 
+                    x_offset + BACKGROUND_WIDTH_LAYER1, 
+                    y_offset + BACKGROUND_WIDTH_LAYER1, 
+                    width=BACKGROUND_WIDTH - 2 * BACKGROUND_WIDTH_LAYER1, 
+                    height=BACKGROUND_HEIGHT - 2 * BACKGROUND_WIDTH_LAYER1)
+        
+        c.drawImage(BACKGROUND_PATH_LAYER3, 
+                    x_offset + BACKGROUND_WIDTH_LAYER2, 
+                    y_offset + BACKGROUND_WIDTH_LAYER2, 
+                    width=BACKGROUND_WIDTH - 2 * BACKGROUND_WIDTH_LAYER2, 
+                    height=BACKGROUND_HEIGHT - 2 * BACKGROUND_WIDTH_LAYER2)
+        
+        # c.drawImage(BACKGROUND_PATH_ONE, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
         if one_image:
             c.drawImage(one_image, x_offset + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
                          y_offset + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
@@ -56,6 +79,17 @@ def create_pdf(image_paths, output_pdf_path):
             y_offset -= BACKGROUND_HEIGHT + IMGS_BTW_HEIGHT
 
     c.save()
+
+
+
+def draw_circle_image(c, x, y, image_path):
+    radius = IMG_WIDTH / 2
+    c.saveState()  
+    c.translate(x + radius, y + radius)  
+    c.circle(0, 0, radius)  
+    c.clipPath()  
+    c.drawImage(image_path, x, y, width=IMG_WIDTH, height=IMG_HEIGHT)  
+    c.restoreState()  
 
 def get_image_paths(directory):
     image_paths = []

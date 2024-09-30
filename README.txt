@@ -8,17 +8,11 @@ for the normal operation of both scripts there are the following key directories
 
 these directories, as well as files and they do not need to be opened by third-party programs and
 
-for WINDOWS 10(64 bit), 11(64 bit)
-
-if you're using Windows, you just need to run "first_run.bat" as an administrator.
-It will install Python for you if it is not there and will install the necessary libraries
-
-for Linux, MacOS
+for Windows
 1.Install the latest version of python
-    https://www.python.org/downloads/
+    https://www.python.org/ftp/python/3.12.6/python-3.12.6-amd64.exe
 2.install pip
-    sudo apt update
-    sudo apt install python3-pip
+    pip install --upgrade pip
 3.install the libraries
     pip install opencv-python Pillow reportlab
 4.Run the script qr-code.py
