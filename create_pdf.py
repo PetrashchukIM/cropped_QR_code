@@ -1,6 +1,10 @@
 import os
 from reportlab.lib.pagesizes import letter, portrait
 from reportlab.pdfgen import canvas
+from reportlab.graphics.shapes import Path
+import math
+
+from mycircle import *
 
 IMG_WIDTH = 40
 IMG_HEIGHT = 40
@@ -22,6 +26,7 @@ BACKGROUND_PATH_LAYER1 = os.path.join('template_background', 'layer1.png')
 BACKGROUND_PATH_LAYER2 = os.path.join('template_background', 'layer2.png')
 BACKGROUND_PATH_LAYER3 = os.path.join('template_background', 'layer3.png')
 
+BACKGROUND_PATH_TMP_LAYER1 = os.path.join('temp', 'tmp_layer1.png')
 
 def create_pdf(image_paths, output_pdf_path):
     c = canvas.Canvas(output_pdf_path, pagesize=letter)
@@ -67,29 +72,27 @@ def create_pdf(image_paths, output_pdf_path):
                          width=IMG_WIDTH, height=IMG_HEIGHT)
         x_offset += BACKGROUND_WIDTH + IMGS_BTW_WIDTH
 
-        c.drawImage(BACKGROUND_PATH_SECOND, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
+        
+        c.drawImage(BACKGROUND_PATH_LAYER3, 
+                    x_offset, 
+                    y_offset, 
+                    width=BACKGROUND_WIDTH, 
+                    height=BACKGROUND_HEIGHT)
+        
+        c.drawImage(BACKGROUND_PATH_TMP_LAYER1, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
+        
         if second_image:
             c.drawImage(second_image, x_offset + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
-                         y_offset + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
-                         width=IMG_WIDTH, height=IMG_HEIGHT)
+                        y_offset + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
+                        width=IMG_WIDTH, height = IMG_HEIGHT)
+
         x_offset += BACKGROUND_WIDTH + IMGS_BTW_WIDTH
 
         if x_offset + BACKGROUND_WIDTH > width:
             x_offset = X_OFFSETS
             y_offset -= BACKGROUND_HEIGHT + IMGS_BTW_HEIGHT
 
-    c.save()
-
-
-
-def draw_circle_image(c, x, y, image_path):
-    radius = IMG_WIDTH / 2
-    c.saveState()  
-    c.translate(x + radius, y + radius)  
-    c.circle(0, 0, radius)  
-    c.clipPath()  
-    c.drawImage(image_path, x, y, width=IMG_WIDTH, height=IMG_HEIGHT)  
-    c.restoreState()  
+    c.save() 
 
 def get_image_paths(directory):
     image_paths = []
