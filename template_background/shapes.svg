@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+                    <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Square -->
+                    <rect width="200" height="200" fill="#FFFFFF" />
+                    <!-- Large Circle -->
+                    <circle cx="100.0" cy="66.66666666666666" r="50" fill="#FF6BEC" />
+                    <!-- Small Circle -->
+                    <circle cx="100.0" cy="66.66666666666666" r="49" fill="#409434" />
+                </svg>
+                

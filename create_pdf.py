@@ -1,10 +1,7 @@
 import os
 from reportlab.lib.pagesizes import letter, portrait
 from reportlab.pdfgen import canvas
-from reportlab.graphics.shapes import Path
-import math
 
-from mycircle import *
 
 IMG_WIDTH = 40
 IMG_HEIGHT = 40
@@ -19,14 +16,14 @@ BACKGROUND_WIDTH = 75
 BACKGROUND_HEIGHT = 75
 BACKGROUND_WIDTH_LAYER1 = 0.5
 BACKGROUND_WIDTH_LAYER2 = 12
+BACKGROUND_CIRCLE_WHITE = 15
 
-BACKGROUND_PATH_ONE = os.path.join('template_background', 'tml_background_one.png')
-BACKGROUND_PATH_SECOND = os.path.join('template_background', 'tml_background_second.png')
 BACKGROUND_PATH_LAYER1 = os.path.join('template_background', 'layer1.png')
 BACKGROUND_PATH_LAYER2 = os.path.join('template_background', 'layer2.png')
 BACKGROUND_PATH_LAYER3 = os.path.join('template_background', 'layer3.png')
 
-BACKGROUND_PATH_TMP_LAYER1 = os.path.join('temp', 'tmp_layer1.png')
+BACKGROUND_PATH_CIRCLE = os.path.join('template_background', 'shapes.png')
+
 
 def create_pdf(image_paths, output_pdf_path):
     c = canvas.Canvas(output_pdf_path, pagesize=letter)
@@ -65,7 +62,6 @@ def create_pdf(image_paths, output_pdf_path):
                     width=BACKGROUND_WIDTH - 2 * BACKGROUND_WIDTH_LAYER2, 
                     height=BACKGROUND_HEIGHT - 2 * BACKGROUND_WIDTH_LAYER2)
         
-        # c.drawImage(BACKGROUND_PATH_ONE, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
         if one_image:
             c.drawImage(one_image, x_offset + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
                          y_offset + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
@@ -73,13 +69,14 @@ def create_pdf(image_paths, output_pdf_path):
         x_offset += BACKGROUND_WIDTH + IMGS_BTW_WIDTH
 
         
-        c.drawImage(BACKGROUND_PATH_LAYER3, 
-                    x_offset, 
-                    y_offset, 
-                    width=BACKGROUND_WIDTH, 
-                    height=BACKGROUND_HEIGHT)
         
-        c.drawImage(BACKGROUND_PATH_TMP_LAYER1, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
+        c.drawImage(BACKGROUND_PATH_CIRCLE, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
+
+        c.drawImage(BACKGROUND_PATH_LAYER3, 
+                    x_offset + BACKGROUND_CIRCLE_WHITE, 
+                    y_offset + BACKGROUND_CIRCLE_WHITE, 
+                    width=BACKGROUND_WIDTH - 2 * BACKGROUND_CIRCLE_WHITE, 
+                    height=BACKGROUND_HEIGHT - 2 * BACKGROUND_CIRCLE_WHITE)
         
         if second_image:
             c.drawImage(second_image, x_offset + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
@@ -114,3 +111,4 @@ image_paths = get_image_paths(image_directory)
 output_pdf_path = generate_output_pdf_path("output_QR/output.pdf")
 
 create_pdf(image_paths, output_pdf_path)
+
