@@ -68,7 +68,7 @@ def extract_and_safe_qr_code (name_file, otput_name_file):
 
         print(f"Extracted QR code and saved as {output_full_path_img}")
     else:
-        print(F"QR code not found in {input_img}")
+        print(f"QR code not found in {input_img}")
 
 
 def save_img(half, name_file):

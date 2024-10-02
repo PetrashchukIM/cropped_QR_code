@@ -10,7 +10,7 @@ Y_OFFSETS = 35
 
 IMGS_BTW_WIDTH = 10
 IMGS_BTW_HEIGHT = 15
-IMGS_PER_ROW = 5
+IMGS_PER_ROW = 6
 
 BACKGROUND_WIDTH = 75
 BACKGROUND_HEIGHT = 75
@@ -29,8 +29,10 @@ def create_pdf(image_paths, output_pdf_path):
     c = canvas.Canvas(output_pdf_path, pagesize=letter)
     width, height = letter
 
-    x_offset = X_OFFSETS
-    y_offset = height - BACKGROUND_HEIGHT - Y_OFFSETS
+    x_offset_one = X_OFFSETS
+    y_offset_one = height - BACKGROUND_HEIGHT - Y_OFFSETS
+    x_offset_second = X_OFFSETS
+    y_offset_second = height - 2 * BACKGROUND_HEIGHT -  Y_OFFSETS 
 
     image_pairs = {}
 
@@ -44,50 +46,69 @@ def create_pdf(image_paths, output_pdf_path):
             if identifier in image_pairs:
                 image_pairs[identifier][1] = path
 
+    count_in_row = 0 
+
     for identifier, pair in image_pairs.items():
         one_image = pair[0]
         second_image = pair[1]
         
-        c.drawImage(BACKGROUND_PATH_LAYER1, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
+        if count_in_row <IMGS_PER_ROW - 1 :
+            count_in_row += 1
+        else:    
+            count_in_row = 0
+
+        c.drawImage(BACKGROUND_PATH_LAYER1, x_offset_one, y_offset_one, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
         
         c.drawImage(BACKGROUND_PATH_LAYER2, 
-                    x_offset + BACKGROUND_WIDTH_LAYER1, 
-                    y_offset + BACKGROUND_WIDTH_LAYER1, 
+                    x_offset_one + BACKGROUND_WIDTH_LAYER1, 
+                    y_offset_one + BACKGROUND_WIDTH_LAYER1, 
                     width=BACKGROUND_WIDTH - 2 * BACKGROUND_WIDTH_LAYER1, 
                     height=BACKGROUND_HEIGHT - 2 * BACKGROUND_WIDTH_LAYER1)
         
         c.drawImage(BACKGROUND_PATH_LAYER3, 
-                    x_offset + BACKGROUND_WIDTH_LAYER2, 
-                    y_offset + BACKGROUND_WIDTH_LAYER2, 
+                    x_offset_one + BACKGROUND_WIDTH_LAYER2, 
+                    y_offset_one + BACKGROUND_WIDTH_LAYER2, 
                     width=BACKGROUND_WIDTH - 2 * BACKGROUND_WIDTH_LAYER2, 
                     height=BACKGROUND_HEIGHT - 2 * BACKGROUND_WIDTH_LAYER2)
         
         if one_image:
-            c.drawImage(one_image, x_offset + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
-                         y_offset + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
+            print(f"One_image {one_image}")
+            c.drawImage(one_image, x_offset_one + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
+                         y_offset_one + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
                          width=IMG_WIDTH, height=IMG_HEIGHT)
-        x_offset += BACKGROUND_WIDTH + IMGS_BTW_WIDTH
-
-        
-        
-        c.drawImage(BACKGROUND_PATH_CIRCLE, x_offset, y_offset, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
+    
+    
+        c.drawImage(BACKGROUND_PATH_CIRCLE, x_offset_second, y_offset_second, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
 
         c.drawImage(BACKGROUND_PATH_LAYER3, 
-                    x_offset + BACKGROUND_CIRCLE_WHITE, 
-                    y_offset + BACKGROUND_CIRCLE_WHITE, 
+                    x_offset_second + BACKGROUND_CIRCLE_WHITE, 
+                    y_offset_second + BACKGROUND_CIRCLE_WHITE, 
                     width=BACKGROUND_WIDTH - 2 * BACKGROUND_CIRCLE_WHITE, 
                     height=BACKGROUND_HEIGHT - 2 * BACKGROUND_CIRCLE_WHITE)
         
         if second_image:
-            c.drawImage(second_image, x_offset + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
-                        y_offset + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
+            print(f"Second_image {second_image}")
+            c.drawImage(second_image, x_offset_second + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
+                        y_offset_second + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
                         width=IMG_WIDTH, height = IMG_HEIGHT)
 
-        x_offset += BACKGROUND_WIDTH + IMGS_BTW_WIDTH
+        if count_in_row == 0:    
+            x_offset_one = X_OFFSETS
+            y_offset_one -= BACKGROUND_HEIGHT +  BACKGROUND_HEIGHT
+            x_offset_second = X_OFFSETS
+            y_offset_second -= BACKGROUND_HEIGHT + BACKGROUND_HEIGHT
+            
+        if count_in_row != 0:    
+            x_offset_one += BACKGROUND_WIDTH + IMGS_BTW_WIDTH
+            x_offset_second += BACKGROUND_WIDTH + IMGS_BTW_WIDTH
 
-        if x_offset + BACKGROUND_WIDTH > width:
-            x_offset = X_OFFSETS
-            y_offset -= BACKGROUND_HEIGHT + IMGS_BTW_HEIGHT
+
+        if y_offset_one < 0 or y_offset_second < 0:  
+            c.showPage()  
+            x_offset_one = X_OFFSETS
+            y_offset_one = height - BACKGROUND_HEIGHT - Y_OFFSETS
+            x_offset_second = X_OFFSETS
+            y_offset_second = height - 2 * BACKGROUND_HEIGHT - Y_OFFSETS
 
     c.save() 
 
