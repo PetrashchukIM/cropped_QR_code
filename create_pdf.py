@@ -32,7 +32,7 @@ def create_pdf(image_paths, output_pdf_path):
     x_offset_one = X_OFFSETS
     y_offset_one = height - BACKGROUND_HEIGHT - Y_OFFSETS
     x_offset_second = X_OFFSETS
-    y_offset_second = height - 2 * BACKGROUND_HEIGHT -  Y_OFFSETS 
+    y_offset_second = height - BACKGROUND_HEIGHT - Y_OFFSETS
 
     image_pairs = {}
 
@@ -57,6 +57,12 @@ def create_pdf(image_paths, output_pdf_path):
         else:    
             count_in_row = 0
 
+        if second_image:
+            print(f"Second_image {second_image}")
+            c.drawImage(second_image, x_offset_second + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
+                        y_offset_second + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
+                        width=IMG_WIDTH, height = IMG_HEIGHT)
+
         c.drawImage(BACKGROUND_PATH_LAYER1, x_offset_one, y_offset_one, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
         
         c.drawImage(BACKGROUND_PATH_LAYER2, 
@@ -76,27 +82,12 @@ def create_pdf(image_paths, output_pdf_path):
             c.drawImage(one_image, x_offset_one + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
                          y_offset_one + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
                          width=IMG_WIDTH, height=IMG_HEIGHT)
-    
-    
-        c.drawImage(BACKGROUND_PATH_CIRCLE, x_offset_second, y_offset_second, width=BACKGROUND_WIDTH, height=BACKGROUND_HEIGHT)
-
-        c.drawImage(BACKGROUND_PATH_LAYER3, 
-                    x_offset_second + BACKGROUND_CIRCLE_WHITE, 
-                    y_offset_second + BACKGROUND_CIRCLE_WHITE, 
-                    width=BACKGROUND_WIDTH - 2 * BACKGROUND_CIRCLE_WHITE, 
-                    height=BACKGROUND_HEIGHT - 2 * BACKGROUND_CIRCLE_WHITE)
-        
-        if second_image:
-            print(f"Second_image {second_image}")
-            c.drawImage(second_image, x_offset_second + (BACKGROUND_WIDTH - IMG_WIDTH) / 2, 
-                        y_offset_second + (BACKGROUND_HEIGHT - IMG_HEIGHT) / 2, 
-                        width=IMG_WIDTH, height = IMG_HEIGHT)
 
         if count_in_row == 0:    
             x_offset_one = X_OFFSETS
-            y_offset_one -= BACKGROUND_HEIGHT +  BACKGROUND_HEIGHT
+            y_offset_one -= BACKGROUND_HEIGHT + IMGS_BTW_HEIGHT
             x_offset_second = X_OFFSETS
-            y_offset_second -= BACKGROUND_HEIGHT + BACKGROUND_HEIGHT
+            y_offset_second -= BACKGROUND_HEIGHT + IMGS_BTW_HEIGHT
             
         if count_in_row != 0:    
             x_offset_one += BACKGROUND_WIDTH + IMGS_BTW_WIDTH
@@ -108,7 +99,7 @@ def create_pdf(image_paths, output_pdf_path):
             x_offset_one = X_OFFSETS
             y_offset_one = height - BACKGROUND_HEIGHT - Y_OFFSETS
             x_offset_second = X_OFFSETS
-            y_offset_second = height - 2 * BACKGROUND_HEIGHT - Y_OFFSETS
+            y_offset_second = height - BACKGROUND_HEIGHT - Y_OFFSETS
 
     c.save() 
 
