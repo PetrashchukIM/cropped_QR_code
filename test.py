@@ -1,43 +1,89 @@
-from fpdf import FPDF
+def create_pdf_with_layers_low_level(filename):
+    # Визначаємо параметри PDF
+    width = 595.0  # Ширина сторінки (A4)
+    height = 842.0  # Висота сторінки (A4)
+    square_size = 100
+    spacing = 5
+    squares_per_row = 3
 
-class PDF(FPDF):
-    def header(self):
-        self.set_font("Arial", "B", 12)
-        self.cell(0, 10, "Colored Squares as Layers", new_x='LMARGIN', new_y='NEXT', align='C')
+    colors = [
+        (1, 0, 0),   # Червоний
+        (0, 0, 1)    # Синій
+    ]
 
-    def footer(self):
-        self.set_y(-15)
-        self.set_font("Arial", "I", 8)
-        self.cell(0, 10, f"Page {self.page_no()}", new_x='LMARGIN', new_y='TOP', align='C')
+    # Відкриваємо файл для запису
+    with open(filename, 'wb') as f:
+        # Стандартний заголовок PDF
+        f.write(b"%PDF-1.4\n")
+        f.write(b"1 0 obj\n")
+        f.write(b"<< /Type /Catalog /Pages 2 0 R >>\n")
+        f.write(b"endobj\n")
 
-    def draw_square(self, x, y, size, color, label):
-        # Заливка кольором
-        self.set_fill_color(*color)
-        self.rect(x, y, size, size, 'F')  # 'F' означає заливку
-        # Додавання назви
-        self.set_xy(x, y + size + 2)  # Переміщуємо позицію для тексту
-        self.set_font("Arial", "B", 12)
-        self.cell(size, 10, label, align='C')
+        # Створюємо сторінку
+        f.write(b"2 0 obj\n")
+        f.write(b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>\n")
+        f.write(b"endobj\n")
 
-# Створення PDF
-pdf = PDF()
-pdf.add_page()
+        # Опис сторінки
+        f.write(b"3 0 obj\n")
+        f.write(b"<< /Type /Page /MediaBox [0 0 595 842] /Contents 4 0 R >>\n")
+        f.write(b"endobj\n")
 
-# Параметри квадратів
-squares = [
-    {"position": (10, 20), "size": 40, "color": (255, 0, 0), "label": "Red Square"},
-    {"position": (60, 20), "size": 40, "color": (0, 255, 0), "label": "Green Square"},
-    {"position": (110, 20), "size": 40, "color": (0, 0, 255), "label": "Blue Square"},
-    {"position": (10, 70), "size": 40, "color": (255, 255, 0), "label": "Yellow Square"},
-    {"position": (60, 70), "size": 40, "color": (255, 165, 0), "label": "Orange Square"},
-    {"position": (110, 70), "size": 40, "color": (128, 0, 128), "label": "Purple Square"},
-]
+        # Створюємо вміст сторінки (старт потокового блоку)
+        f.write(b"4 0 obj\n")
+        f.write(b"<< /Length 5 0 R >>\n")
+        f.write(b"stream\n")
 
-# Додавання квадратів у PDF
-for square in squares:
-    pdf.draw_square(square["position"][0], square["position"][1], square["size"], square["color"], square["label"])
+        # Перший контур для червоних квадратів
+        f.write(b"q\n")  # Збереження стану
+        f.write(b"/OC /Layer1 BDC\n")  # Початок першого контуру
+        f.write(b"1 0 0 rg\n")  # Червоний колір
 
-# Зберегти PDF
-pdf.output("colored_squares.pdf")
+        start_x = (width - (squares_per_row * square_size + (squares_per_row - 1) * spacing)) / 2
+        start_y = height - 150
 
-print("PDF with colored squares created successfully!")
+        for row in range(1):  # Перший рядок
+            for col in range(squares_per_row):
+                x = start_x + col * (square_size + spacing)
+                y = start_y - row * (square_size + spacing)
+                f.write(f"{x} {y} {square_size} {square_size} re\n".encode())
+                f.write(b"f\n")  # Заповнення кольором
+
+        f.write(b"EMC\n")  # Закінчення контуру
+        f.write(b"Q\n")  # Відновлення стану
+
+        # Другий контур для синіх квадратів
+        f.write(b"q\n")  # Збереження стану
+        f.write(b"/OC /Layer2 BDC\n")  # Початок другого контуру
+        f.write(b"0 0 1 rg\n")  # Синій колір
+
+        for row in range(1, 2):  # Другий рядок
+            for col in range(squares_per_row):
+                x = start_x + col * (square_size + spacing)
+                y = start_y - row * (square_size + spacing)
+                f.write(f"{x} {y} {square_size} {square_size} re\n".encode())
+                f.write(b"f\n")  # Заповнення кольором
+
+        f.write(b"EMC\n")  # Закінчення контуру
+        f.write(b"Q\n")  # Відновлення стану
+
+        # Завершення потокового блоку
+        f.write(b"endstream\n")
+        f.write(b"endobj\n")
+
+        # Створення таблиці перекладу
+        f.write(b"xref\n")
+        f.write(b"0 5\n")
+        f.write(b"0000000000 65535 f \n")
+        f.write(b"0000000010 00000 n \n")
+        f.write(b"0000000060 00000 n \n")
+        f.write(b"0000000110 00000 n \n")
+        f.write(b"0000000200 00000 n \n")
+
+        # Завершення PDF
+        f.write(b"trailer\n")
+        f.write(b"<< /Size 5 /Root 1 0 R >>\n")
+        f.write(b"%%EOF\n")
+
+# Виклик функції для створення PDF
+create_pdf_with_layers_low_level("grouped_squares_layers.pdf")
